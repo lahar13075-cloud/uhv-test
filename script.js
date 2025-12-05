@@ -1,12 +1,53 @@
 // QUESTIONS
 const questions = [
-  { q:"What is invariant and universal among all human beings?", opts:["Natural Acceptance","Understanding","Expectations","None"], answer:"A" },
-  { q:"Value education helps to?", opts:["Remove our confusions","Bring harmony","Remove contradictions","All"], answer:"A" },
-  { q:"Holistic development means?", opts:["Physical only","Relationships","Understanding + Relationships + Physical","None"], answer:"A" },
-  { q:"Experiential validation means?", opts:["Desires","Verify with natural acceptance","Expectations","Thoughts"], answer:"A" },
-  { q:"Ensuring justice leads to ___ in society.", opts:["Trust","Fearlessness","Respect","None"], answer:"A" }
-];
+  { q: "What is invariant and universal among all human beings?", opts: ["Natural Acceptance", "Understanding", "Expectations", "None of these"], answer: "A" },
+  { q: "Value education helps to?", opts: ["Remove our confusions", "Bring harmony in life", "Remove contradictions", "All of these"], answer: "D" },
+  { q: "Holistic development of human beings means?", opts: ["Physical facility only", "Living with relationships", "Right understanding + relationships + physical facility", "None"], answer: "C" },
+  { q: "Experiential validation means?", opts: ["Living by desires", "Verifying with natural acceptance", "Living by expectations", "Living by thoughts"], answer: "B" },
+  { q: "Ensuring justice in relationship leads to ____ in society.", opts: ["Trust", "Fearlessness", "Respect", "None"], answer: "A" },
 
+  { q: "The basic human aspiration is?", opts: ["Wealth", "Education", "Happiness and prosperity", "Power"], answer: "C" },
+  { q: "Relationship is based on?", opts: ["Fear", "Competition", "Trust", "Misunderstanding"], answer: "C" },
+  { q: "Prosperity means?", opts: ["Having more money", "Having physical facility", "Feeling of having enough", "Power"], answer: "C" },
+  { q: "Sanyam means?", opts: ["Controlling others", "Self-discipline", "Respecting others", "Avoiding food"], answer: "B" },
+  { q: "Seva means?", opts: ["Helping others", "Working for money", "Serving with responsibility", "None"], answer: "C" },
+
+  { q: "Which is the correct order of human values?", opts: ["Respect → Trust → Affection", "Trust → Respect → Affection", "Affection → Trust → Respect", "None"], answer: "B" },
+  { q: "Natural acceptance is?", opts: ["Always changing", "Dependent on beliefs", "Universal", "Different for everyone"], answer: "C" },
+  { q: "Fearlessness in society comes from?", opts: ["Wealth", "Technology", "Trust in relationships", "Competition"], answer: "C" },
+  { q: "What leads to harmony in family?", opts: ["Money", "Trust and respect", "More facilities", "Arguing"], answer: "B" },
+  { q: "Which value strengthens relationships?", opts: ["Anger", "Possessiveness", "Respect", "Jealousy"], answer: "C" },
+
+  { q: "Which is a basic requirement for human beings?", opts: ["Physical facility", "Relationship", "Both A and B", "Neither"], answer: "C" },
+  { q: "Right understanding is developed by?", opts: ["Reading books", "Observation & self-exploration", "Listening to others", "Watching movies"], answer: "B" },
+  { q: "Human consciousness is?", opts: ["Needs unlimited", "Needs limited", "Opposite of animal consciousness", "None"], answer: "C" },
+  { q: "Respect means?", opts: ["Seeing the other as valuable", "Praising others", "Fear", "Dominating others"], answer: "A" },
+  { q: "Trust means?", opts: ["Assuming negative", "Assuming intentions are good", "Doubting others", "Judging"], answer: "B" },
+
+  { q: "What is harmony in self?", opts: ["No confusion", "Clarity", "No contradiction", "All of these"], answer: "D" },
+  { q: "Competence means?", opts: ["Having more money", "Right skills with right understanding", "Competing with others", "Beating others"], answer: "B" },
+  { q: "What is the basis of a healthy society?", opts: ["Power", "Wealth", "Justice", "Competition"], answer: "C" },
+  { q: "Which is NOT a human value?", opts: ["Trust", "Affection", "Greed", "Respect"], answer: "C" },
+  { q: "Human being = ?", opts: ["Body only", "Mind only", "Body + Consciousness", "None"], answer: "C" },
+
+  { q: "What is the meaning of harmony?", opts: ["Fight", "Mutual happiness", "Competition", "Domination"], answer: "B" },
+  { q: "To be in relationship you need?", opts: ["Fear", "Trust", "Competition", "Anger"], answer: "B" },
+  { q: "Which is a physical facility?", opts: ["Food", "Trust", "Affection", "Respect"], answer: "A" },
+  { q: "What is required for prosperity?", opts: ["Unlimited facilities", "Enough facilities + right understanding", "Competition", "Anger"], answer: "B" },
+  { q: "Commitment means?", opts: ["Changing decision", "Being responsible consistently", "Forcing others", "Avoiding tasks"], answer: "B" },
+
+  { q: "Which is needed for long-term happiness?", opts: ["Money", "Relationship", "Winning over others", "Power"], answer: "B" },
+  { q: "Right evaluation means?", opts: ["Judging quickly", "Evaluating on the basis of competence", "Comparing with others", "Criticizing"], answer: "B" },
+  { q: "Justice consists of?", opts: ["Trust", "Respect", "Affection", "All of these"], answer: "D" },
+  { q: "Which is an indicator of prosperity?", opts: ["Greed", "Feeling of enough", "Jealousy", "Comparison"], answer: "B" },
+  { q: "Which is NOT needed in relationships?", opts: ["Trust", "Respect", "Competition", "Affection"], answer: "C" },
+
+  { q: "Human desires are?", opts: ["Unlimited", "Limited", "Random", "Meaningless"], answer: "B" },
+  { q: "Which is external to the body?", opts: ["Respect", "Clothes", "Thoughts", "Feelings"], answer: "B" },
+  { q: "What is the basis of mutual happiness?", opts: ["Competition", "Complementarity", "Domination", "Selfishness"], answer: "B" },
+  { q: "Which is a natural need?", opts: ["Trust", "Greed", "Jealousy", "Laziness"], answer: "A" },
+  { q: "Education should lead to?", opts: ["Job only", "Pressure", "Right understanding", "Competition"], answer: "C" }
+];
 let order = [];
 let userAnswers = {};
 let cur = 0;
