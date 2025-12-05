@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>UHV Test — Neon Black</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div>
+          <h1>UHV Test</h1>
+          <div class="sub" style="margin-top:4px;font-weight:700;color:var(--accent)">Designed by Lahar</div>
+          <div class="sub">One question per page • 40 marks • 1 mark each</div>
+        </div>
+        <div>
+          <button id="themeToggle" class="btn">Light Mode</button>
+        </div>
+      </header>
+
+      <div id="startPage">
+        <div class="sub">Enter student's name and choose options</div>
+        <label class="input">Name: <input type="text" id="username" placeholder="Type name" /></label>
+
+        <div class="settings" style="display:none">
+          <label class="toggle"><input type="checkbox" id="enableTimer" checked /> Timer</label>
+          <label class="toggle">Minutes: <input type="number" id="timerMinutes" value="30" style="width:70px;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)"/></label>
+          <label class="toggle"><input type="checkbox" id="showAnswers" /> Show answers at end</label>
+        </div>
+
+        <div style="margin-top:14px">
+          <button class="btn ripple" id="startBtn">Start Test</button>
+        </div>
+      </div>
+
+      <div id="quiz">
+        <div class="progress-wrap">
+          <div class="progress"><i id="progressBar"></i></div>
+        </div>
+        <div class="meta">
+          <div class="small" id="progressText">Question 1 / 40</div>
+          <div class="small" id="timerText" style="font-weight:700;color:var(--accent)">30:00</div>
+        </div>
+
+        <div class="qstage" id="qstage"></div>
+
+        <div class="controls">
+          <div style="display:flex;gap:8px">
+            <button class="btn ripple" id="prevBtn">Previous</button>
+            <button class="btn ripple" id="nextBtn">Next</button>
+          </div>
+          <div class="small">Answered: <span id="answeredCount">0</span>/<span id="totalCount">0</span></div>
+        </div>
+
+        <div id="result" style="margin-top:14px;font-size:26px;"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
