@@ -1,4 +1,4 @@
-// QUESTIONS
+// ---------- 40 UHV QUESTIONS ----------
 const questions = [
   { q: "What is invariant and universal among all human beings?", opts: ["Natural Acceptance", "Understanding", "Expectations", "None of these"], answer: "A" },
   { q: "Value education helps to?", opts: ["Remove our confusions", "Bring harmony in life", "Remove contradictions", "All of these"], answer: "D" },
@@ -48,6 +48,8 @@ const questions = [
   { q: "Which is a natural need?", opts: ["Trust", "Greed", "Jealousy", "Laziness"], answer: "A" },
   { q: "Education should lead to?", opts: ["Job only", "Pressure", "Right understanding", "Competition"], answer: "C" }
 ];
+
+// -------------------- STATE --------------------
 let order = [];
 let userAnswers = {};
 let cur = 0;
@@ -56,124 +58,228 @@ let remainingSeconds = 0;
 let animating = false;
 
 const $ = id => document.getElementById(id);
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-function pad(n){return n.toString().padStart(2,'0');}
-function formatTime(s){return `${Math.floor(s/60)}:${pad(s%60)}`;}
-function capitalize(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function pad(n){ return n.toString().padStart(2,'0'); }
+function formatTime(s){ const m=Math.floor(s/60); const ss=s%60; return `${m}:${pad(ss)}`; }
+function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
 
-// THEME SWITCH
-let light=false;
-$("themeToggle").onclick=()=>{
-  light=!light;
-  if(light){
-    document.body.style.background="#f4f4f4";
-    document.body.style.color="#000";
-    $("themeToggle").innerText="Dark Mode";
-  } else {
-    document.body.style.background="";
-    document.body.style.color="";
-    $("themeToggle").innerText="Light Mode";
-  }
-};
-
-// START BUTTON
-$("startBtn").onclick=()=>{
+// -------------------- START TEST --------------------
+$("startBtn").addEventListener("click", () => {
   const name = $("username").value.trim();
-  if(!name){ alert("Enter name first"); return; }
+  if (!name) { alert("Enter name first"); return; }
 
-  order = shuffle(Array.from(questions.keys()));
+  order = shuffle([...Array(questions.length).keys()]);
   $("totalCount").innerText = questions.length;
 
-  $("startPage").style.display="none";
-  $("quiz").style.display="block";
+  $("startPage").style.display = "none";
+  $("quiz").style.display = "block";
 
-  remainingSeconds = 30 * 60;
+  remainingSeconds = parseInt($("timerMinutes").value || "30") * 60;
   $("timerText").innerText = formatTime(remainingSeconds);
 
-  timerInterval = setInterval(()=>{
+  timerInterval = setInterval(() => {
     remainingSeconds--;
-    if(remainingSeconds<=0){ clearInterval(timerInterval); submitTest(); }
+    if (remainingSeconds <= 0) {
+      clearInterval(timerInterval);
+      submitTest();
+    }
     $("timerText").innerText = formatTime(remainingSeconds);
-  },1000);
+  }, 1000);
 
   renderStage();
   showQuestion(0);
-};
+});
 
-// RENDER QUESTIONS
-function renderStage(){
+// -------------------- RENDER QUESTIONS --------------------
+function renderStage() {
   const stage = $("qstage");
-  stage.innerHTML="";
+  stage.innerHTML = "";
 
-  questions.forEach((q,i)=>{
+  questions.forEach((q, i) => {
     const card = document.createElement("div");
-    card.className="question-card";
-    card.id="card"+i;
-    card.style.display="none";
+    card.className = "question-card";
+    card.id = "card" + i;
+    card.style.display = "none";
 
-    let html = `<div class='qtext'><strong>Q${i+1}.</strong> ${q.q}</div><div class='options'>`;
+    card.innerHTML = `<div class='qtext'><strong>Q${i+1}.</strong> ${q.q}</div>`;
 
-    q.opts.forEach((o,j)=>{
-      const letter = ["A","B","C","D"][j];
-      html += `
-        <label class="option">
-          <input type="radio" name="q${i}" value="${letter}">
-          <strong>${letter}.</strong> ${o}
-        </label>`;
+    const opts = document.createElement("div");
+    opts.className = "options";
+
+    q.opts.forEach((o, j) => {
+      const letter = ["A", "B", "C", "D"][j];
+      const opt = document.createElement("label");
+      opt.className = "option";
+
+      opt.innerHTML = `<input type='radio' name='q${i}' value='${letter}' /> 
+                       <strong>${letter}.</strong> ${o}`;
+
+      opt.addEventListener("click", () => {
+        document.querySelectorAll(`input[name="q${i}"]`)[j].checked = true;
+        userAnswers[i] = letter;
+        updateAnswered();
+      });
+
+      opts.appendChild(opt);
     });
 
-    html += "</div>";
-    card.innerHTML = html;
+    card.appendChild(opts);
     stage.appendChild(card);
   });
+
+  updateAnswered();
 }
 
-// SHOW QUESTION
-function showQuestion(pos){
-  document.querySelectorAll(".question-card").forEach(c=>c.style.display="none");
-  const card = $("card"+order[pos]);
-  card.style.display="block";
+// -------------------- SHOW QUESTION WITH ANIMATION --------------------
+function showQuestion(position) {
+  if (animating) return;
+  animating = true;
 
-  cur = pos;
-  $("progressText").innerText = `Question ${cur+1} / ${questions.length}`;
-  $("progressBar").style.width = (cur/questions.length)*100 + "%";
+  const prev = document.querySelector(".question-card.show");
+  const newCard = $("card" + order[position]);
 
-  $("prevBtn").style.display = cur>0 ? "inline-block" : "none";
-  $("nextBtn").innerText = cur<questions.length-1 ? "Next" : "Submit";
+  newCard.style.display = "block";
+  newCard.classList.remove("out-left", "out-right", "in-left", "in-right", "show");
+
+  if (prev) {
+    const prevIndex = parseInt(prev.id.replace("card", ""));
+    const direction = (order.indexOf(prevIndex) < position) ? "out-left" : "out-right";
+    prev.classList.add(direction);
+    prev.classList.remove("show");
+  }
+
+  const incoming = prev ? 
+    ((order.indexOf(parseInt(prev?.id.replace("card", ""))) < position) ? "in-right" : "in-left")
+    : "in-right";
+
+  newCard.classList.add(incoming);
+
+  setTimeout(() => {
+    newCard.classList.remove("in-left", "in-right");
+    newCard.classList.add("show");
+
+    if (prev) {
+      setTimeout(() => {
+        prev.style.display = "none";
+        prev.classList.remove("out-left", "out-right");
+      }, 420);
+    }
+
+    const radios = document.getElementsByName("q" + order[position]);
+    for (const r of radios) r.checked = (userAnswers[order[position]] === r.value);
+
+    animating = false;
+    updateProgress();
+  }, 20);
+
+  cur = position;
+  $("prevBtn").style.display = (cur > 0) ? "inline-block" : "none";
+  $("nextBtn").innerText = (cur < questions.length - 1) ? "Next" : "Submit";
 }
 
-$("nextBtn").onclick=()=>{
+// -------------------- NAVIGATION --------------------
+$("nextBtn").addEventListener("click", () => {
   saveCurrent();
-  if(cur<questions.length-1) showQuestion(cur+1);
+  if (cur < questions.length - 1) showQuestion(cur + 1);
   else submitTest();
-};
+});
 
-$("prevBtn").onclick=()=>{
+$("prevBtn").addEventListener("click", () => {
   saveCurrent();
-  showQuestion(cur-1);
-};
+  if (cur > 0) showQuestion(cur - 1);
+});
 
-function saveCurrent(){
+function saveCurrent() {
   const sel = document.querySelector(`input[name="q${order[cur]}"]:checked`);
-  if(sel) userAnswers[order[cur]] = sel.value;
+  if (sel) userAnswers[order[cur]] = sel.value;
+  updateAnswered();
+}
+
+function updateAnswered() {
   $("answeredCount").innerText = Object.keys(userAnswers).length;
 }
 
-// SUBMIT TEST
-function submitTest(){
-  clearInterval(timerInterval);
+function updateProgress() {
+  const pct = Math.round((cur / questions.length) * 100);
+  $("progressBar").style.width = pct + "%";
+  $("progressText").innerText = `Question ${cur + 1} / ${questions.length}`;
+}
 
+// -------------------- SUBMIT TEST --------------------
+function submitTest() {
+  if (timerInterval) clearInterval(timerInterval);
   saveCurrent();
 
-  let score=0;
-  for(let i=0;i<questions.length;i++)
-    if(userAnswers[i]===questions[i].answer) score++;
+  let score = 0;
+  for (let i = 0; i < questions.length; i++) {
+    if (userAnswers[i] === questions[i].answer) score++;
+  }
 
-  $("qstage").style.display="none";
-  document.querySelector(".controls").style.display="none";
-  $("progressText").style.display="none";
-  $("timerText").style.display="none";
+  $("qstage").style.display = "none";
+  document.querySelector(".controls").style.display = "none";
+  $("result").style.display = "block";
 
-  $("result").style.display="block";
-  $("result").innerHTML=`<div style="font-size:20px;font-weight:700">${capitalize($("username").value)}, your score is ${score}/${questions.length}</div>`;
+  $("timerText").style.display = "none";
+  document.querySelector(".progress-wrap").style.display = "none";
+
+  const name = $("username").value.trim();
+  $("result").innerHTML = `<div style="font-size:20px;font-weight:700">
+      ${capitalize(name)}, your score is ${score}/${questions.length}
+  </div>`;
+
+  if ($("showAnswers").checked) {
+    const det = document.createElement("div");
+    det.style.marginTop = "12px";
+
+    questions.forEach((q, i) => {
+      const wrap = document.createElement("div");
+      wrap.style.marginTop = "8px";
+      wrap.innerHTML = `<strong>Q${i+1}.</strong> ${q.q}`;
+
+      q.opts.forEach((opt, j) => {
+        const letter = ["A", "B", "C", "D"][j];
+        const line = document.createElement("div");
+        line.style.padding = "8px";
+        line.style.borderRadius = "6px";
+
+        if (letter === q.answer) line.style.background = "rgba(56,163,255,0.1)";
+        if (userAnswers[i] === letter && letter !== q.answer)
+          line.style.background = "rgba(255,80,80,0.1)";
+
+        line.innerHTML = `<strong>${letter}.</strong> ${opt}`;
+        wrap.appendChild(line);
+      });
+
+      det.appendChild(wrap);
+    });
+
+    $("result").appendChild(det);
+  }
 }
+
+// --------------- RIPPLE EFFECT --------------------
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".ripple").forEach(btn => {
+    btn.addEventListener("click", function (e) {
+      const circle = document.createElement("span");
+      circle.style.position = "absolute";
+      circle.style.borderRadius = "50%";
+      circle.style.width = "120px";
+      circle.style.height = "120px";
+      circle.style.left = (e.offsetX - 60) + "px";
+      circle.style.top = (e.offsetY - 60) + "px";
+      circle.style.background = "rgba(255,255,255,0.08)";
+      circle.style.transform = "scale(0)";
+      circle.style.transition = "transform .6s, opacity .8s";
+
+      this.appendChild(circle);
+
+      setTimeout(() => {
+        circle.style.transform = "scale(1)";
+        circle.style.opacity = "0";
+      }, 10);
+
+      setTimeout(() => circle.remove(), 900);
+    });
+  });
+});
